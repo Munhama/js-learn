@@ -38,13 +38,13 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 
     // Timer
-    let deadline = '2022-03-04';
+    let deadline = '2022-04-04';
 
     function getTimeRemaining(endtime) {
         let t = Date.parse(endtime) - Date.parse(new Date()),
             seconds = Math.floor((t/1000) % 60),
             minutes = Math.floor((t/1000/60) % 60),
-            hours = Math.floor((t/(1000*60)) % 24),
+            hours = Math.floor((t/(1000*60*60)) % 24),
             days = Math.floor((t/(1000*60*60*24)));
 
         return {
@@ -90,4 +90,30 @@ window.addEventListener('DOMContentLoaded', function() {
 
     setClock('timer', deadline);
 
+    // Modal
+    let more = document.querySelector('.more'),
+        overlay = document.querySelector('.overlay'),
+        close = document.querySelector('.popup-close'),
+        deskriptionBtn = document.querySelectorAll('.description-btn');
+
+    more.addEventListener('click', function() {
+        overlay.style.display = 'block';
+        this.classList.add('more-splash');
+        document.body.style.overflow = 'hidden';
+    });
+
+    close.addEventListener('click', function() {
+        overlay.style.display = 'none';
+        more.classList.remove('more-splash');
+        document.body.style.overflow = '';
+    });
+
+    deskriptionBtn.forEach(function(item) {
+        item.addEventListener('click', function() {
+            overlay.style.display = 'block';
+            this.classList.add('more-splash');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
 });
