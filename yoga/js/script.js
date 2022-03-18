@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function () {
 
     'use strict';
 
@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    info.addEventListener('click', function(event) {
+    info.addEventListener('click', function (event) {
         let target = event.target;
 
         if (target && target.classList.contains('info-header-tab')) {
@@ -42,17 +42,17 @@ window.addEventListener('DOMContentLoaded', function() {
 
     function getTimeRemaining(endtime) {
         let t = Date.parse(endtime) - Date.parse(new Date()),
-            seconds = Math.floor((t/1000) % 60),
-            minutes = Math.floor((t/1000/60) % 60),
-            hours = Math.floor((t/(1000*60*60)) % 24),
-            days = Math.floor((t/(1000*60*60*24)));
+            seconds = Math.floor((t / 1000) % 60),
+            minutes = Math.floor((t / 1000 / 60) % 60),
+            hours = Math.floor((t / (1000 * 60 * 60)) % 24),
+            days = Math.floor((t / (1000 * 60 * 60 * 24)));
 
         return {
-            'total' : t,
-            'days' : days,
-            'hours' : hours,
-            'minutes' : minutes,
-            'seconds' : seconds
+            'total': t,
+            'days': days,
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds
         };
     }
 
@@ -69,14 +69,14 @@ window.addEventListener('DOMContentLoaded', function() {
 
             if (t.hours < 10) {
                 t.hours = '0' + t.hours;
-            } 
+            }
             if (t.minutes < 10) {
                 t.minutes = '0' + t.minutes;
-            } 
+            }
             if (t.seconds < 10) {
                 t.seconds = '0' + t.seconds;
             }
-            
+
             days.textContent = t.days;
             hours.textContent = t.hours;
             minutes.textContent = t.minutes;
@@ -96,26 +96,26 @@ window.addEventListener('DOMContentLoaded', function() {
         close = document.querySelector('.popup-close'),
         deskriptionBtn = document.querySelectorAll('.description-btn');
 
-    more.addEventListener('click', function() {
+    more.addEventListener('click', function () {
         overlay.style.display = 'block';
         this.classList.add('more-splash');
         document.body.style.overflow = 'hidden';
     });
 
-    close.addEventListener('click', function() {
+    close.addEventListener('click', function () {
         overlay.style.display = 'none';
         more.classList.remove('more-splash');
         document.body.style.overflow = '';
     });
 
-    deskriptionBtn.forEach(function(item) {
-        item.addEventListener('click', function() {
+    deskriptionBtn.forEach(function (item) {
+        item.addEventListener('click', function () {
             overlay.style.display = 'block';
             this.classList.add('more-splash');
             document.body.style.overflow = 'hidden';
         });
     });
-    
+
     // Form AJAX
     let form = document.querySelector('.main-form'),
         input = form.getElementsByTagName('input'),
@@ -129,21 +129,21 @@ window.addEventListener('DOMContentLoaded', function() {
 
     messageDiv.classList.add('status');
 
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
         form.append(messageDiv);
 
         let formData = new FormData(form);
 
-        let promise = new Promise(function(resolve, reject) {
+        let promise = new Promise(function (resolve, reject) {
             let request = new XMLHttpRequest();
             request.open('POST', 'server.php');
             request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 
-            request.addEventListener('readystatechange', function() {
-                if(request.readyState < 4) {
+            request.addEventListener('readystatechange', function () {
+                if (request.readyState < 4) {
                     resolve();
-                } else if(request.readyState === 4 && request.status == 200) {
+                } else if (request.readyState === 4 && request.status == 200) {
                     resolve();
                 } else {
                     reject();
@@ -151,7 +151,7 @@ window.addEventListener('DOMContentLoaded', function() {
             });
 
             let obj = {};
-            formData.forEach(function(value, key) {
+            formData.forEach(function (value, key) {
                 obj[key] = value;
             });
             let json = JSON.stringify(obj);
@@ -170,6 +170,57 @@ window.addEventListener('DOMContentLoaded', function() {
             .then(() => messageDiv.textContent = message.success)
             .catch(() => messageDiv.textContent = message.fail)
             .finally(clearInput);
+    });
+
+    // Slider
+    let slides = document.querySelectorAll('.slider-item'),
+        prev = document.querySelector('.prev'),
+        next = document.querySelector('.next'),
+        dotsWrap = document.querySelector('.slider-dots'),
+        dots = document.querySelectorAll('.dot');
+
+    let slideIndex = 1;
+
+    showSlides(slideIndex);
+
+    function showSlides(n) {
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+        if (n < 1) {
+            slideIndex = slides.length;
+        }
+
+        slides.forEach((item) => item.style.display = 'none');
+        dots.forEach((item) => item.classList.remove('dot-active'));
+
+        slides[slideIndex - 1].style.display = 'block';
+        dots[slideIndex - 1].classList.add('dot-active');
+    }
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    prev.addEventListener('click', function () {
+        plusSlides(-1);
+    });
+
+    next.addEventListener('click', function () {
+        plusSlides(1);
+    });
+
+    dotsWrap.addEventListener('click', function (event) {
+        for (let i = 0; i < dots.length + 1; i++) {
+            if (event.target.classList.contains('dot') && 
+                event.target == dots[i - 1]) {
+                currentSlide(i);
+            }
+        }
     });
 
 });
