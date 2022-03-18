@@ -116,4 +116,60 @@ window.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Form AJAX
+    let form = document.querySelector('.main-form'),
+        input = form.getElementsByTagName('input'),
+        messageDiv = document.createElement('div');
+
+    let message = {
+        loading: 'Загрузка...',
+        success: 'Отправленно!',
+        fail: 'Что-то пошло не так...',
+    };
+
+    messageDiv.classList.add('status');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        form.append(messageDiv);
+
+        let formData = new FormData(form);
+
+        let promise = new Promise(function(resolve, reject) {
+            let request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+            request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+
+            request.addEventListener('readystatechange', function() {
+                if(request.readyState < 4) {
+                    resolve();
+                } else if(request.readyState === 4 && request.status == 200) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+
+            let obj = {};
+            formData.forEach(function(value, key) {
+                obj[key] = value;
+            });
+            let json = JSON.stringify(obj);
+
+            request.send(json);
+        });
+
+        function clearInput() {
+            for (let i = 0; i < input.length; i++) {
+                input[i].value = '';
+            }
+        }
+
+        promise
+            .then(() => messageDiv.textContent = message.loading)
+            .then(() => messageDiv.textContent = message.success)
+            .catch(() => messageDiv.textContent = message.fail)
+            .finally(clearInput);
+    });
+
 });
